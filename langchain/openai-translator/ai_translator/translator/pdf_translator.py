@@ -36,7 +36,7 @@ class PDFTranslator:
         for page_idx, page in enumerate(self.book.pages):
             for content_idx, content in enumerate(page.contents):
                 # 翻译每个页面的每个内容
-                translation, status = self.translate_chain.run(content, source_language, target_language, speaking_style=speaking_style)
+                translation, status = self.translate_chain.run(content, source_language, target_language, speaking_style)
                 # 保存翻译结果
                 self.book.pages[page_idx].contents[content_idx].set_translation(translation, status)
         
