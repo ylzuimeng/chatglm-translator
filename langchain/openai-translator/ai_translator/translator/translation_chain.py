@@ -18,8 +18,9 @@ class TranslationChain:
         # 使用 System 角色的提示模板，用于提示用户当前的翻译任务
         # source_language: 待翻译文本的源语言
         # target_language: 待翻译文本的目标语言
+        # speaking_style: 话术风格
         template = (
-            """You are a translation expert, proficient in various languages. \n
+            """You are a translation expert with a {speaking_style} speaking style, proficient in various languages. \n
             Translates {source_language} to {target_language}."""
         )
         system_message_prompt = SystemMessagePromptTemplate.from_template(template)
@@ -44,7 +45,8 @@ class TranslationChain:
     # text: 待翻译的文本
     # source_language: 待翻译文本的源语言
     # target_language: 待翻译文本的目标语言
-    def run(self, text: str, source_language: str, target_language: str) -> (str, bool):
+    # speaking_style: 话术风格
+    def run(self, text: str, source_language: str, target_language: str, speaking_style: str) -> (str, bool):
         result = ""
         try:
             # 运行 LLMChain 对象
@@ -52,6 +54,7 @@ class TranslationChain:
                 "text": text,
                 "source_language": source_language,
                 "target_language": target_language,
+                "speaking_style": speaking_style
             })
         except Exception as e:
             LOG.error(f"An error occurred during translation: {e}")

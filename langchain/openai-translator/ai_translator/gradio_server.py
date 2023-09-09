@@ -14,15 +14,21 @@ from translator import PDFTranslator, TranslationConfig
 # input_file: gradio.File类型,输入文件
 # source_language: str类型,源语言,默认为英语
 # target_language: str类型,目标语言,默认为中文
-def translation(input_file, source_language, target_language):
+# speaking_style: str类型,话术风格,默认为作家
+def translation(input_file, source_language, target_language, speaking_style):
 
   # 打印调试信息
-  LOG.debug(f"[翻译任务]\n源文件: {input_file.name}\n源语言: {source_language}\n目标语言: {target_language}")
+  # 支持多行字符串
+  LOG.debug(f"""[翻译任务]
+  源文件: {input_file.name}
+  源语言: {source_language}
+  目标语言: {target_language}
+  话术风格: {speaking_style}""")
   
   # 调用翻译器的translate_pdf方法进行翻译
   # input_file.name: str类型,输入文件路径
   output_file_path = Translator.translate_pdf(
-    input_file.name, source_language=source_language, target_language=target_language)
+    input_file.name, source_language=source_language, target_language=target_language, speaking_style=speaking_style)
 
   # 返回翻译后的文件路径
   return output_file_path
@@ -39,7 +45,8 @@ def launch_gradio():
     inputs=[
       gr.File(label="上传PDF文件"),
       gr.Textbox(label="源语言(默认:英文)", placeholder="English", value="English"),
-      gr.Textbox(label="目标语言(默认:中文)", placeholder="Chinese", value="Chinese")
+      gr.Textbox(label="目标语言(默认:中文)", placeholder="Chinese", value="Chinese"),
+      gr.Textbox(label="话术风格(默认:作家)", placeholder="Writer", value="Writer")
     ],
     outputs=[
       gr.File(label="下载翻译文件")

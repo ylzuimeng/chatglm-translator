@@ -20,12 +20,14 @@ class PDFTranslator:
     # output_file_format: str 类型,输出文件格式,支持PDF和Markdown
     # source_language: str 类型,源语言,默认为英语
     # target_language: str 类型,目标语言,默认为中文
+    # speaking_style: str 类型,话术风格,默认为作家
     # pages: Optional[int] 类型,翻译的页数,默认为 None,表示翻译所有页
     def translate_pdf(self,
                     input_file: str,
                     output_file_format: str = 'markdown',
                     source_language: str = "English",
                     target_language: str = 'Chinese',
+                    speaking_style: str = 'Writer',
                     pages: Optional[int] = None):
         # 解析 PDF 文件
         self.book = self.pdf_parser.parse_pdf(input_file, pages)
@@ -34,7 +36,7 @@ class PDFTranslator:
         for page_idx, page in enumerate(self.book.pages):
             for content_idx, content in enumerate(page.contents):
                 # 翻译每个页面的每个内容
-                translation, status = self.translate_chain.run(content, source_language, target_language)
+                translation, status = self.translate_chain.run(content, source_language, target_language, speaking_style=speaking_style)
                 # 保存翻译结果
                 self.book.pages[page_idx].contents[content_idx].set_translation(translation, status)
         
