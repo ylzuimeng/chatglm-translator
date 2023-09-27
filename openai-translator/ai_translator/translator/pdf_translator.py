@@ -1,49 +1,42 @@
-# 导入 typing 模块中的 Optional 类型
-from typing import Optional
-# 导入 Model 类，用于翻译模型的加载和使用
-from model import Model
-# 导入 PDFParser 类，用于解析 PDF 文件
-from translator.pdf_parser import PDFParser
-# 导入 Writer 类，用于将翻译结果写入文件
-from translator.writer import Writer
-# 导入 LOG 函数，用于记录日志
-from utils import LOG
+from typing import Optional  # 引入 Optional 类型，表示可选参数
+from translator.pdf_parser import PDFParser  # 引入 PDFParser 类，用于解析 PDF 文件
+from translator.writer import Writer  # 引入 Writer 类，用于将翻译结果写入文件
+from translator.translation_chain import TranslationChain  # 引入 TranslationChain 类，用于构建翻译链
+from utils import LOG  # 引入 LOG 对象，用于记录日志
 
-# PDFTranslator 类
+# PDFTranslator 类,用于将 PDF 文件翻译为指定格式的文件
 class PDFTranslator:
-    # 构造函数，接收一个 Model 类型的参数
-    def __init__(self, model: Model):
-        # 将传入的 Model 对象赋值给 self.model
-        self.model = model
-        # 创建 PDFParser 对象并赋值给 self.pdf_parser
+    # 初始化 PDFTranslator 类，传入模型名称
+    def __init__(self, model_name: str):
+        # 初始化翻译链
+        self.translate_chain = TranslationChain(model_name)
+        # 初始化 PDF 解析器
         self.pdf_parser = PDFParser()
-        # 创建 Writer 对象并赋值给 self.writer
+        # 初始化写入器
         self.writer = Writer()
 
-    # 翻译 PDF 文件
-    # 第一个参数 pdf_file_path 用于指定要翻译的 PDF 文件的路径
-    # 第二个参数 file_format 用于指定翻译后的文件格式，默认为 PDF
-    # 第三个参数 target_language 用于指定目标语言，默认为中文
-    # 第四个参数 output_file_path 用于指定翻译后的文件的保存路径，默认为 None，表示不保存
-    # 第五个参数 pages 用于指定翻译的页数，默认为 None，表示翻译所有页
-    def translate_pdf(self, pdf_file_path: str, file_format: str = 'PDF', target_language: str = '中文', output_file_path: str = None, pages: Optional[int] = None):
-        # 解析 PDF 文件并返回一个 Book 对象，赋值给 self.book
-        self.book = self.pdf_parser.parse_pdf(pdf_file_path, pages)
+    # 将 PDF 文件翻译为指定格式的文件
+    # input_file: str 类型,输入文件路径
+    # output_file_format: str 类型,输出文件格式,支持PDF和Markdown
+    # source_language: str 类型,源语言,默认为英语
+    # target_language: str 类型,目标语言,默认为中文
+    # pages: Optional[int] 类型,翻译的页数,默认为 None,表示翻译所有页
+    def translate_pdf(self,
+                    input_file: str,
+                    output_file_format: str = 'markdown',
+                    source_language: str = "English",
+                    target_language: str = 'Chinese',
+                    pages: Optional[int] = None):
+        # 解析 PDF 文件
+        self.book = self.pdf_parser.parse_pdf(input_file, pages)
 
-        # 遍历每一页和每个内容块
+        # 遍历所有页面内容
         for page_idx, page in enumerate(self.book.pages):
             for content_idx, content in enumerate(page.contents):
-                # 将内容块传入 Model 对象的 translate_prompt 方法中，返回翻译的提示语句
-                prompt = self.model.translate_prompt(content, target_language)
-                # 打印提示语句
-                LOG.debug(prompt)
-                # 将提示语句传入 Model 对象的 make_request 方法中，返回翻译结果和状态
-                translation, status = self.model.make_request(prompt)
-                # 打印翻译结果
-                LOG.info(translation)
-                
-                # 直接在 self.book.pages 中更新内容块的翻译结果和状态
+                # 翻译每个页面的每个内容
+                translation, status = self.translate_chain.run(content, source_language, target_language)
+                # 保存翻译结果
                 self.book.pages[page_idx].contents[content_idx].set_translation(translation, status)
-
-        # 将翻译后的 Book 对象保存到文件中
-        self.writer.save_translated_book(self.book, output_file_path, file_format)
+        
+        # 保存翻译后的内容为指定格式的文件
+        return self.writer.save_translated_book(self.book, output_file_format)
