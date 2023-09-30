@@ -18,8 +18,8 @@ from langchain.schema import (
 from transformers import AutoTokenizer, AutoModel
 
 class ChatGLM2(BaseChatModel):
-    tokenizer = AutoTokenizer.from_pretrained("THUDM/chatglm2-6b-int4", trust_remote_code=True)
-    model = AutoModel.from_pretrained("THUDM/chatglm2-6b-int4", trust_remote_code=True).float()
+    tokenizer = AutoTokenizer.from_pretrained("model/chatglm2-6b-int4", trust_remote_code=True)
+    model = AutoModel.from_pretrained("model/chatglm2-6b-int4", trust_remote_code=True).half().cuda()
     model.eval()
 
     @root_validator()
