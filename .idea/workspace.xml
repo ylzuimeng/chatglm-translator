@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="39474998-8a3b-4f98-9c61-53ec0d0b0f79" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/openai-translator/ai_translator/gradio_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/openai-translator/ai_translator/gradio_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/openai-translator/ai_translator/translator/chatglm2.py" beforeDir="false" afterPath="$PROJECT_DIR$/openai-translator/ai_translator/translator/chatglm2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -58,7 +58,7 @@ def initialize_translator():
   args = argument_parser.parse_arguments()
 
   # 设置OpenAI API Key
-  os.environ["OPENAI_API_KEY"] = args.api_key
+  # os.environ["OPENAI_API_KEY"] = args.api_key
 
   # 初始化配置类
   config = TranslationConfig()
